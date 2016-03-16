@@ -1,0 +1,23 @@
+<div class="jumbotron">
+  <h1>Welcome !</h1>
+  Enter URL here to convert 
+  <form name="myForm" >
+  <input type="url" name="input" ng-model="url" required>
+  <div role="alert">
+    <span class="error" ng-show="myForm.input.$error.required">
+      Required!</span>
+    <span class="error" ng-show="myForm.input.$error.url">
+      Not valid url!</span>
+  </div>
+  <tt>myForm.input.$valid = {{myForm.input.$valid}}</tt><br/>
+  <tt>myForm.input.$error = {{myForm.input.$error}}</tt><br/>
+  <tt>myForm.$valid = {{myForm.$valid}}</tt><br/>
+  <tt>myForm.$error.required = {{!!myForm.$error.required}}</tt><br/>
+  <tt>myForm.$error.url = {{!!myForm.$error.url}}</tt><br/>
+  url = {{url}} <br /> <!-- shows the url-->
+  <div ng-bind-html="received">sfdw</div>
+  </form>
+  <!--receiving = {{received}}--> 	
+  <p><a class="btn btn-lg btn-success" ng-click='Convert()'>Convert<span class="glyphicon glyphicon-ok"></span></a></p>
+</div>
+

@@ -1,0 +1,102 @@
+#+AUTHOR:    Sai Gollapudi
+#+EMAIL:     saigollapudi1@gmail.com
+
+
+#+DESCRIPTION: starting a base code for a renarrator
+#+KEYWORDS: Alipi, Renarration, Sweets, NPTEL, MOOKs
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:nil skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: hidestars
+
+#+HTML_LINK_UP: index.html
+#+HTML_LINK_HOME:   index.html
+
+#+INFOJS_OPT: view:info toc:t ltoc:t tdepth:1 mouse:underline buttons:0 path:style/js/org-info.js
+#+HTML_HEAD:  <link rel="stylesheet" type="text/css" href="style/css/worg-style.css" />
+#+HTML_HEAD_EXTRA:  <link rel="stylesheet" type="text/css" href="style/css/override.css" />
+#+HTML_HEAD_EXTRA:  <link rel="icon" type="image/png" href="style/img/favicon/popl.png" />
+
+
+* Introduction
+We are building a code base to enable renarration. Renarration is both
+a process and an outcome of modifying a source content with an intent
+to make it more accessible to a user community which is part of a
+different context.
+
+Web content which is already published and present on the World Wide Web
+is not always accessible to all users. Some users may have physical 
+access problems and some may have more subtler challeges like a
+language barrier (i.e. content is English but user is a non-native
+English speaker), or a cogntive-complexity barrier (i.e. content is
+more complex than the user's ability to grasp it), or a social barrier
+(i.e. the content is using examples, metaphors which are not quite
+relavent to the end-user's situation). Renarration is the act of
+re-presenting and re-purposing this existing content such that it is
+more accessible.
+
+In practce, Renarrating a web source would mean that we would need to
+"meaningfully" modify some already published web material. The
+assumption is that existing code is not available for us to modify at
+the source level -- i.e. we assume that we are not authorized to
+modify the source content. We also assume that original source code
+should not be modified permanently. That is, we are not aiming at
+loosing the original source for a renarrated target. Instead, we are
+interested in designing a system that would enable the co-existence of
+a modified source. This is our definition of renarration.
+
+If a web page is perceived as a DOM node-tree then any changes to the
+structure or content of the node-tree is a renarration.
+
+If a web page is seen as a combination of content plus interface then
+any changes to the content or to the interface is a renarration.
+
+There are already some tools that enable web page modification. Here
+are some examples:
+ 
+
+A web page is modeled as a DOM node-tree. In the initial releases we
+will present renarration as a modification of nodes within the
+node-tree. The modifications will include add, replace,
+change-attributes etc.
+
+web page modification is possible by many techniques. 
+
+We are presenting renarration as a web page modification that is
+persistent and meaningful to a clusters of new users. That is,
+modifying a page with a express of making it accessible to a new group
+of audiences implies that we have to make it persistent, modifiable
+and reachable. 
+
+
+* Requirements
+Our implementation will be done in releases named r0, r1, r2 etc. 
+
+** r0 release
+#+INCLUDE: "r0_release.org" :minlevel 1
+
+** r1 release
+#+INCLUDE: "r1_release.org" :minlevel 1
+
+* Design
+** web page as a DOM tree
+We follow the model of a web page as a DOM tree. A DOM tree has 
+
+** about Sweets
+#+INCLUDE: "sweets.org" :minlevel 1
+
+** about Ontologies
+#+INCLUDE: "ontology_helper.org" :minlevel 1
+
+
+* Implementation
+
+* Validation
+
+* bibliography / references
+# this is loading up my references for citation. I am using 
+# a file named doc_references.bib but .bib not required
+# formating is plain, which can be changed
+#+BIBLIOGRAPHY: doc_references plain

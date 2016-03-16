@@ -1,0 +1,498 @@
+#+AUTHOR:    Sai Gollapudi
+#+EMAIL:     saigollapudi1@gmail.com
+
+
+#+DESCRIPTION: starting a base code for a renarrator
+#+KEYWORDS: Alipi, Renarration, Sweets, NPTEL, MOOKs
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:nil skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: hidestars
+
+#+HTML_LINK_UP: index.html
+#+HTML_LINK_HOME:   index.html
+
+#+INFOJS_OPT: view:info toc:t ltoc:t tdepth:1 mouse:underline buttons:0 path:style/js/org-info.js
+#+HTML_HEAD:  <link rel="stylesheet" type="text/css" href="style/css/worg-style.css" />
+#+HTML_HEAD_EXTRA:  <link rel="stylesheet" type="text/css" href="style/css/override.css" />
+#+HTML_HEAD_EXTRA:  <link rel="icon" type="image/png" href="style/img/favicon/popl.png" />
+
+* Introduction
+In this project we are building a renarration application which is
+meant to take in text from a (any) web page and replace it with
+phonetic equivalent symbols. The replacement need not persist. It is
+just a method to allow for text to be personalized / modified for
+user.
+
+In this case we are assuming the user is a novice-reader who will
+benefit by reading some text, along with some phonetic symbols.
+
+Basic goals are:
++ create a web application with Web Services in the background
++ Inent is to be able to take a URL (any) and feed it thru our portal
+  app and we get a Phonetically modified text output
++ Diff options: only selected text is modified, or whole page is
+  modified etc.
+
+The project is being developed in multiple releases: r0, r1, r2 etc.
+
+Future aspirations for this project are:
++ change format of date (26 Jan, 2016 to January 26, 2016 or 26/1/16)
++ change unit of measure (pounds to kgs; liters to gallons; km to miles)
++ change forex ($$ to INR... based on today's rate, or based on some benchmarked date  etc)
++ Some personalization data which informs your format changes - i.e enduser has to somehow signal our system to identify which formats he likes, which date for forex etc.) so, there is some personalization tuple we need to have somewhere...
++ multiple web services... one changes date, the other change units, other changes currency... a service or a set f services get activated based on personalization tuple
++ To find date, currency, or unit... how do you search in text? - Problem area...
+
+
+* requirements
+we are building this app using a series of releases from r0, r1, r2
+onwards. 
+** r0 requirements
+This is the base release. We are planning on using this release to
+setup a base system.  In this r0 we should have a server, a client and
+an ability to display the text from a identified URL.
+
+The core functions that are required of this release are:
++ develop a web app 
++ app should have a text box input for user to enter a URL
++ UI should enable the user to enter a URL
++ the web app should now be able to accept this URL and show the
+  contents elsewhere.
+
+
+** r1 requirements
+In r1 we wish to introduce the concept of Web Services and Restful APi
+to our code. Developing a Web Service requires the development of a
+Restful API server which is different from our basic web app server
+that was done in r0. So, the code in r1 will not build on r0
+code. Instead, it will just use the code developed in r0.
+
+In this r1 release we should be able to have:
+*** web services functionality
+**** a demo operation of modifying text
+Here the input URL will give some source text. The web service will
+return some dummy replacement text. This method is to just ensure that
+we are able to receive and modify text
+**** a demo operation to be able to replace a word with another equivalent as defined by some database
+Here the attempt is to be able to search and replace text from
+source. The replacement can be in a table or a database.
+**** a demo of phonetic level changes to some words
+Here we link to (a dummy database) full of word<->photentic symbol
+mapping and we are replacing actual word with appropriate Phonetic symbol.
+
+
+** r2 requirements
+In this r2 release we should be able to have:
++ Change words as per the database symbols
++ Should be able to change all or part of text in source text (UI work) 
+
+
+** r3 requirements
+In r3, which is still to be negotiated, we expect to work with dates
+and various formats of dates. Here the notion of showing dates using
+web services and showing it in different formats is demonstrated.
+
+
+** r4 requirements
+In r4, which is still to be negotiated, we expect to work with currencies
+and various formats of currencies. We also expect to do some Forex
+transactions using web services. Here the notion of showing
+currencies and maybe giving amounts in different currencies using
+web services  is demonstrated.
+
+
+* Design
+There are two applications that are simultaneously running for this
+project. One is the web app which is showing the user the
+phoentics. We call this the Phoentics web app. 
+
+The other app is a Restful server. This runs independently from the
+first Phonetics web app. This Restful server does not have a client
+side.
+
+In the implementation we share our coding logic for both these apps.
+
+
+* Implementation
+There are two apps that need to be developed. One is the Phoentics
+app, and the other is the Restful server app. Both are described here.
+
+** Phoentics Web App
+The Phoentics Web App has two parts to it: a server side (which works
+of Node.js) and a client side which is being run using javascript
+file.
+
+*** server side code
+Server side code rests in app.js, main.js and view-page.js
+files. These are given below.
+
+**** app.js file
+The application code is resting in app.js file.
+#+NAME: app_fullfile
+#+BEGIN_SRC js :noweb code :export code :tangle build/app.js
+'use strict';
+
+/**
+ * @ngdoc overview
+ * @name sampleProject3App
+ * @description
+ * # sampleProject3App
+ *
+ * Main module of the application.
+ */
+angular
+  .module('sampleProject3App', [
+    'ngAnimate',
+    'ngCookies',
+    'ngMessages',
+    'ngResource',
+    'ngRoute',
+    'restangular'
+  ])
+  // routes required for the app
+  .config(function ($routeProvider) {
+    //RestangularProvider.setBaseUrl('http://localhost:8080');
+    $routeProvider
+      .when('/', {
+        templateUrl: 'views/main.html',
+        controller: 'MainCtrl'
+      })
+      .when('/about', {
+        templateUrl: 'views/about.html',
+        controller: 'AboutCtrl'
+      })
+      .when('/view-page', {
+        templateUrl: 'views/view-page.html',
+        controller: 'ViewPageCtrl'
+      })
+      .when('/view-page/:url', {
+        templateUrl: 'views/view-page.html',
+        controller: 'ViewPageCtrl'
+      })
+      .otherwise({
+        redirectTo: '/'
+      });
+  })
+  // to make a page trusted otherwise the page is not loaded in browser by angular server
+  .filter('trusted', function ($sce) {
+    return function(url) {
+      return $sce.trustAsResourceUrl(url);
+    };
+  })
+
+  // implementation of message service to send/ receive messages
+  .factory('messages', function(){
+  var messages = {};
+
+  messages.list = [];
+
+  messages.add = function(message){
+    messages.list.push({id: messages.list.length, text: message});
+  };
+
+  return messages;
+})  
+
+.service('messageService', function() {
+  var messageList = [];
+
+  var addMessage = function(newMsg) {
+      messageList.push(newMsg);
+  };
+
+  var getMessages = function(){
+      return messageList;
+  };
+  return {
+    addMessage: addMessage,
+    getMessages: getMessages
+  };
+});
+#+END_SRC
+
+
+**** main.js file...
+This file takes user argument and sends it to the message service of
+app.js file. This should have all the node code for the main file. 
+#+NAME: main_fullFile
+#+BEGIN_SRC js :noweb code :export code :tangle build/main.js
+'use strict';
+
+/**
+ * @ngdoc function
+ * @name sampleProject3App.controller:MainCtrl
+ * @description
+ * # MainCtrl
+ * Controller of the sampleProject3App
+ */
+
+
+angular.module('sampleProject3App')
+  // takes the url from user and passes it to the message service
+  .controller('MainCtrl', function ($scope,messageService,$location) {
+    $scope.url = '';
+     $scope.Convert=function() {
+        messageService.addMessage($scope.url);
+       	$location.path('/view-page');  
+    };
+  });
+#+END_SRC
+
+
+**** view-page.js file
+View page takes the argument from the messenger service of the app and
+passes it to view-page.html.
+
+#+NAME: viewPg_fullfile
+#+BEGIN_SRC js :export code :noweb yes :tangle build/view-page.js
+'use strict';
+
+/**
+ * @ngdoc function
+ * @name sampleProject3App.controller:ViewPageCtrl
+ * @description
+ * # ViewPageCtrl
+ * Controller of the sampleProject3App
+ */
+ /*
+angular.module('sampleProject3App')
+  .controller('ViewPageCtrl', function ($scope,$routeParams) {
+  	$scope.source = $routeParams.url;
+  	//$scope.source = 'http://www.w3schools.com'
+
+  });
+*/
+angular.module('sampleProject3App')
+// takes the url from message service and passes it to view of this page 
+  .controller('ViewPageCtrl', function ($scope,messageService) {
+  	$scope.URLOfsource = messageService.getMessages()[0];
+  	// http get request -> get the page
+
+  	// http DOM parser
+
+  	//var parser = new DOMParser();
+  	//$scope.inner = document.getElementById("iframe-source").innerHTML;
+
+  });
+#+END_SRC
+
+
+*** client side code
+
+Client files consist of HTML files. We use two files main.html,
+view-page.html. The code for both is presented here:
+
+**** main.html
+Main component of the base HTML file deals with setting up the textbox
+for User to enter the URL. This div also provides a button for User to
+click.
+
+#+NAME: main_full
+#+BEGIN_SRC HTML :export code :noweb yes :tangle build/main.html
+<div class="jumbotron">
+  <h1>Welcome !</h1>
+  Enter URL here to convert <input class="url-input" type="text" ng-model="url"><br>
+  url = {{url}} <!-- shows the url--> 	
+  <p><a class="btn btn-lg btn-success" ng-click='Convert()'>Convert<span class="glyphicon glyphicon-ok"></span></a></p>
+</div>
+#+END_SRC
+
+**** view-page.html
+View page shows the content of the User entered URL. This code block
+is a div.
+
+#+NAME: viewHTML_full
+#+BEGIN_SRC HTML :export code :noweb yes :tangle build/view-page.html
+<div class="embed-responsive embed-responsive-16by9">
+source = {{source}}	 <!-- display the name of the used source -->
+	<!-- shows the web-page in an Iframe-->
+  <iframe class="embed-responsive-item" id ="iframe-source" src="{{ URLOfsource | trusted }}">
+  	
+  </iframe> 
+</div>
+#+END_SRC
+
+
+** Restful Server App 
+Web services are REST based and not SOAP. There is no client side for
+this app. Server side is done in Node.js. The file where the server
+runs is called server.js.
+
+**** server.js
+Server.js runs the Restful API service for our app. 
+
+#+NAME: server_full
+#+BEGIN_SRC js :export code :noweb yes :tangle build/server.js
+/ server.js
+
+// BASE SETUP
+// =============================================================================
+
+// call the packages we need
+var express    = require('express');        // call express
+var app        = express();                 // define our app using express
+var bodyParser = require('body-parser');
+var mongoose   = require('mongoose');
+mongoose.connect('mongodb://localhost/api'); 
+
+
+//var Bear     = require('./app/models/bear'); // to be used if there is a model with this name
+var http 	 = require("http");
+var https = require("https"); 
+var requestify = require('requestify');
+//var serialize = require('dom-serialize');
+//var htmlparser = require("htmlparser");
+
+var htmlparser = require("htmlparser2");
+var html = require('htmlparser-to-html');
+
+
+// configure app to use bodyParser()
+// this will let us get the data from a POST
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+var port = process.env.PORT || 8080;
+        // set our port
+
+// ROUTES FOR OUR API
+// =============================================================================
+var router = express.Router();              // get an instance of the express Router
+
+// middleware to use for all requests
+router.use(function(req, res, next) {
+    // do logging
+    console.log('Something is happening.');
+    next(); // make sure we go to the next routes and don't stop here
+});
+
+// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
+router.get('/', function(req, res) {
+    res.json({ message: 'hooray! welcome to our api!' });   
+
+});
+router.route('/')
+    .post(function(req, resp) {
+        var url = req.body.url;
+        console.log(url);
+        var output = '';
+        
+        // sets the options for http request
+        var options = {
+          host: "proxy",
+          port: 8080,
+          path: url,
+          //method : GET,POST,PUT
+          /*headers: {
+            Host: "www.google.co.in"
+          }*///proxy: 'proxy.iiit.ac.in:8080'
+        };
+
+        var req = http.request(options,function(res) {
+            console.log("Request began");
+            
+
+            res.on('data', function (chunk) {
+                output += chunk;
+            });
+            // after receiving contents of the requested page
+            res.on('end', function () {
+                console.log('Request complete:');
+                //console.log(output);
+                
+                // handler for HTML parser -> makes the DOM
+                var handler = new htmlparser.DomHandler(function (error, dom) {
+                    if (error)
+                        //[...do something for errors...]
+                    {
+                        console.log(error.message);
+                    }
+                    else
+                        //[...parsing done, do something...]
+                        console.log("about to start subparsing\n");
+                        
+                        // used to traversal through the html : needs to be on a different
+                        // server
+                        //console.log(dom[0].next.next.children[1].children[9].attribs.href);
+                        var subparsing = function(dom){
+                            
+                            for (var i in dom){    
+                                if (dom[i].name){
+                                    /*if(dom[i].name=="script"){
+                                        continue;
+                                    }*/
+                                    if(dom[i].attribs && dom[i].attribs.href){
+                                        dom[i].attribs.href = url  + "/../.."+ dom[i].attribs.href; 
+                                    }
+                                }
+
+
+                                if(dom[i].data ){
+                                    //console.log(dom[i]);
+                                    if(dom[i].parent){
+                                        // replacemenst
+                                        dom[i].data=dom[i].data.replace(" an ", " /ən/ ");
+                                        dom[i].data=dom[i].data.replace("The ", " /ðiː/ ");
+                                        dom[i].data=dom[i].data.replace(" a ", " /eɪ/ ");
+                                        dom[i].data=dom[i].data.replace("It ", " /ɪt/ ");
+                                        dom[i].data=dom[i].data.replace(" is ", " /ɪz/ ");
+                                        dom[i].data=dom[i].data.replace(" in ", " /ɪn/ ");
+                                        dom[i].data=dom[i].data.replace(" most ", " /məʊst/ ");
+                                        dom[i].data=dom[i].data.replace(" to ", " /tuː/ ");
+                                        dom[i].data=dom[i].data.replace(" be ", " /biː/ ");
+                                        
+
+                                        //dom[i].data=result;
+                                        //var result = dom[i].data.replace(" the ", " ðiː ");
+
+                                        //console.log(dom[i].parent.name + ": " + dom[i].parent.type + ": " +dom[i].data);
+                                    }
+                                }
+                                if(dom[i].children){
+                                    
+                                    subparsing(dom[i].children);
+                                }
+                            }
+                        }
+                        subparsing(dom);
+                        // sending the changed HTML
+                        resp.send(html(dom));
+                        //resp.send(dom);
+                });
+                var parser = new htmlparser.Parser(handler);
+                parser.write(output);
+                parser.done();
+                
+            });
+        });
+
+        req.on('error', function (err) {
+            console.log(err);
+
+        });
+        
+        req.end();
+        console.log("Script complete");
+        
+    })
+
+// more routes for our API will happen here
+
+
+
+
+// REGISTER OUR ROUTES -------------------------------
+// all of our routes will be prefixed with /api
+app.use('/api', router);
+
+// START THE SERVER
+// =============================================================================
+app.listen(port);
+console.log('Magic happens on port ' + port);
+#+END_SRC 
+
+
+* Validation
