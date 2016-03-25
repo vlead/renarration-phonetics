@@ -1,0 +1,40 @@
+Aum Sri Sai Rama
+
+Here is how you install and run the rnr_studio web application. The
+instructions assume a ubutnu 14.04 operating environment. 
+ 1) goto a directory of your choice and clone the rnr_studio git
+    repository. 
+#+BEGIN_SRC 
+git clone https://github.com/saigollapudi/rnr_studio.git
+#+END_SRC
+
+ 2) cd to the new directory and install a Python Flask virtual
+    environment. In my case, the directory is rnr_studio. The virtual
+    environment is setup in a new directory called venv.
+
+#+BEGIN_SRC 
+cd rnr_studio
+virtualenv venv
+#+END_SRC
+
+ 3) go into the virtual environment and install all the required
+    Python packages (in the virtual environment, not globally for
+    python). As the installation is not needed globally, we should
+    refrain from forcing the installation with "sudo". Also, use
+    Python package installer "pip" for this work. In a initial bare
+    virtual environment, I only had these two packages:
+    "argparse==1.2.1" and "wsgiref==0.1.2". I needed to run Setup.py
+    to get the first set of packages installed. README file from
+    alipi repository or janastu org at github (found [[https://github.com/janastu/alip][here]]) also gives
+    some basic information around this package installation requirements.
+
+#+BEGIN_SRC 
+source venv/bin/activate
+python setup.py develop
+
+#+END_SRC
+
+ 4) In the cloned directoy or rnr_studio, there are sample config
+    files. They are called sampleConf.py and sampleConfig.js. These
+    files need to be updated into conf.py and config.js, respectively.
+ 
