@@ -1,0 +1,5 @@
+Flask
+lxml
+oursql
+pymongo
+requests

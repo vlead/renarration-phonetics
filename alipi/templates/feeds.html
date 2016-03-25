@@ -1,0 +1,67 @@
+<!doctype html>
+<head>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+  <script type="text/javascript" src={{ url_for('static',filename="config.js") }}></script>
+  <script type="text/javascript">
+    $.getJSON(config.deploy+"/feed", function(data)
+    {
+    d = $.makeArray(data);
+    d.reverse();
+    str = "";
+    console.log(d[0]);
+    $.each(data, function(i, val)
+    {
+      if(val['about'] != undefined && val['about'] != 'undefined' && val['author'] != 'undefined' )
+    {
+	if(val['location']!='location')
+	{
+	    str += "<p>\n<b>@" +val['author']+"</b> has "+val['type']+" for <b>"+val['about']+"#"+val['xpath']+"</b> at <b>"+val['blog']+"#"+val['bxpath']+"</b> for <b>"+val['location']+"</b> in <b>"+val['lang']+"</b>\n</p>";
+	}
+	else
+	    str += "<p>\n<b>@" +val['author']+"</b> has "+val['type']+" for <b>"+val['about']+"#"+val['xpath']+"</b> at <b>"+val['blog']+"#"+val['bxpath']+"</b> for <b>"+val['lang']+"</b>\n</p>";
+    }
+    });
+    $("#feeds").html(str);
+    });
+  </script>
+</head>
+<body style="text-wrap:normal">
+    @<input type="text" id="t1" name="author" value="author" /> says <input type="text" id="t2" name="about" value="about" />  <input type="text" id="t3" name="xpath" value="xpath" /> has <select id="selected" onchange="checkVal();"><option>re-narrations</option><option>5el</option></select> at <input type="text" id="t4" name="blog" value="blog" /> <input type="text" id="t5" name="bxpath" value="bxpath" /> in <input type="text" name="lang" value="language" id="t6" /> <span id="remove">targetting</span> <input type="text" name="loc" value="location" id="t7"/>  <input type="submit" id="post" name="alipi" value="Feed" onclick="postForm();" /> <input type="submit" name="alipi" value="Test the feed" onclick="doDemo();" />
+<div id="feeds">
+</div>
+<script type="text/javascript">
+   function postForm()
+  {
+   var arr = {};
+   arr['author'] = $('#t1').val();
+   arr['about'] = $('#t2').val();
+   arr['xpath'] = $('#t3').val();
+   arr['blog'] = $('#t4').val();
+   arr['bxpath'] = $('#t5').val();
+   arr['type'] = $("#selected").val();
+   arr['lang'] = $('#t6').val();
+   arr['location'] = $('#t7').val();
+  $.post(config.deploy+"/feeds/write", arr, function(data)
+  {
+  alert("Posted");
+  });
+}
+function checkVal(){
+    if($("#selected").val() == "5el")
+   {
+   $("#t7, #remove").hide();
+   $("#t6").val("tags");
+   }
+    else
+   {
+   $("#t7, #remove").show();
+   $("#t6").val("language");
+   }
+   }
+function doDemo()
+{
+   window.open(config.deploy+"/demo?foruri="+encodeURIComponent($('#t2').val())+"&xpath="+encodeURIComponent($('#t3').val())+"&blog="+encodeURIComponent($('#t4').val())+"&bxpath="+encodeURIComponent($('#t5').val()));
+}
+</script>
+</body>
+</html>

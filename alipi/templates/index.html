@@ -1,0 +1,9 @@
+<!doctype html>
+<script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<body>
+  <p> You have been logged in as {{ username }}. Please click <a id="redirect">here</a> to re-direct yourself to the page you were at.</p>
+  <script>
+    $("#redirect").attr("href", window.localStorage.getItem('lastUrl'));
+  </script>
+</body>
+</html>

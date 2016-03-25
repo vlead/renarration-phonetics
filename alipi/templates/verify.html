@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+  </head>
+  <body class="container">
+    <h4>Help us fight bots, please verify you are a human.</h4>
+    <form class="form" role="form" action="{{ url_for('verify') }}" method="post">
+      <div class="g-recaptcha" data-sitekey="6LdVugETAAAAADNtIcQ-wCwBHweOo3369ghlf7is"></div>
+      <button class="btn" type="submit"><span>Submit</span></button>
+    </form>
+  </body>
+</html>
